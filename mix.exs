@@ -28,7 +28,7 @@ defmodule ExVatcheck.MixProject do
 
   defp deps do
     [
-      {:httpoison, "~> 1.3"},
+      {:httpoison, "~> 2.2"},
       {:sweet_xml, "~> 0.7"},
       # dev/test/tools
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
