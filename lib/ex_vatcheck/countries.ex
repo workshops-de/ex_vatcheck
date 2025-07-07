@@ -35,38 +35,41 @@ defmodule ExVatcheck.Countries do
   ```
   """
 
-  @regexes %{
-    "AT" => ~r/\AATU[0-9]{8}\Z/u,
-    "BE" => ~r/\ABE0[0-9]{9}\Z/u,
-    "BG" => ~r/\ABG[0-9]{9,10}\Z/u,
-    "CY" => ~r/\ACY[0-9]{8}[A-Z]\Z/u,
-    "CZ" => ~r/\ACZ[0-9]{8,10}\Z/u,
-    "DE" => ~r/\ADE[0-9]{9}\Z/u,
-    "DK" => ~r/\ADK[0-9]{8}\Z/u,
-    "EE" => ~r/\AEE[0-9]{9}\Z/u,
-    "EL" => ~r/\AEL[0-9]{9}\Z/u,
-    "ES" => ~r/\AES([A-Z][0-9]{8}|[0-9]{8}[A-Z]|[A-Z][0-9]{7}[A-Z])\Z/u,
-    "FI" => ~r/\AFI[0-9]{8}\Z/u,
-    "FR" => ~r/\AFR[A-Z0-9]{2}[0-9]{9}\Z/u,
-    "GB" => ~r/\AGB([0-9]{9}|[0-9]{12}|(HA|GD)[0-9]{3})\Z/u,
-    "HR" => ~r/\AHR[0-9]{11}\Z/u,
-    "HU" => ~r/\AHU[0-9]{8}\Z/u,
-    "IE" => ~r/\AIE([0-9][A-Z][0-9]{5}|[0-9]{7}[A-Z]?)[A-Z]\Z/u,
-    "IT" => ~r/\AIT[0-9]{11}\Z/u,
-    "LT" => ~r/\ALT([0-9]{9}|[0-9]{12})\Z/u,
-    "LU" => ~r/\ALU[0-9]{8}\Z/u,
-    "LV" => ~r/\ALV[0-9]{11}\Z/u,
-    "MT" => ~r/\AMT[0-9]{8}\Z/u,
-    "NL" => ~r/\ANL[0-9]{9}B[0-9]{2}\Z/u,
-    "PL" => ~r/\APL[0-9]{10}\Z/u,
-    "PT" => ~r/\APT[0-9]{9}\Z/u,
-    "RO" => ~r/\ARO[1-9][0-9]{1,9}\Z/u,
-    "SE" => ~r/\ASE[0-9]{12}\Z/u,
-    "SI" => ~r/\ASI[0-9]{8}\Z/u,
-    "SK" => ~r/\ASK[0-9]{10}\Z/u
-  }
+  # Move regexes inside function to avoid Elixir 1.18 compilation issue
+  defp get_regexes do
+    %{
+      "AT" => ~r/\AATU[0-9]{8}\Z/u,
+      "BE" => ~r/\ABE0[0-9]{9}\Z/u,
+      "BG" => ~r/\ABG[0-9]{9,10}\Z/u,
+      "CY" => ~r/\ACY[0-9]{8}[A-Z]\Z/u,
+      "CZ" => ~r/\ACZ[0-9]{8,10}\Z/u,
+      "DE" => ~r/\ADE[0-9]{9}\Z/u,
+      "DK" => ~r/\ADK[0-9]{8}\Z/u,
+      "EE" => ~r/\AEE[0-9]{9}\Z/u,
+      "EL" => ~r/\AEL[0-9]{9}\Z/u,
+      "ES" => ~r/\AES([A-Z][0-9]{8}|[0-9]{8}[A-Z]|[A-Z][0-9]{7}[A-Z])\Z/u,
+      "FI" => ~r/\AFI[0-9]{8}\Z/u,
+      "FR" => ~r/\AFR[A-Z0-9]{2}[0-9]{9}\Z/u,
+      "GB" => ~r/\AGB([0-9]{9}|[0-9]{12}|(HA|GD)[0-9]{3})\Z/u,
+      "HR" => ~r/\AHR[0-9]{11}\Z/u,
+      "HU" => ~r/\AHU[0-9]{8}\Z/u,
+      "IE" => ~r/\AIE([0-9][A-Z][0-9]{5}|[0-9]{7}[A-Z]?)[A-Z]\Z/u,
+      "IT" => ~r/\AIT[0-9]{11}\Z/u,
+      "LT" => ~r/\ALT([0-9]{9}|[0-9]{12})\Z/u,
+      "LU" => ~r/\ALU[0-9]{8}\Z/u,
+      "LV" => ~r/\ALV[0-9]{11}\Z/u,
+      "MT" => ~r/\AMT[0-9]{8}\Z/u,
+      "NL" => ~r/\ANL[0-9]{9}B[0-9]{2}\Z/u,
+      "PL" => ~r/\APL[0-9]{10}\Z/u,
+      "PT" => ~r/\APT[0-9]{9}\Z/u,
+      "RO" => ~r/\ARO[1-9][0-9]{1,9}\Z/u,
+      "SE" => ~r/\ASE[0-9]{12}\Z/u,
+      "SI" => ~r/\ASI[0-9]{8}\Z/u,
+      "SK" => ~r/\ASK[0-9]{10}\Z/u
+    }
+  end
 
-  @countries Map.keys(@regexes)
+  @countries ~w(AT BE BG CY CZ DE DK EE EL ES FI FR GB HR HU IE IT LT LU LV MT NL PL PT RO SE SI SK)
 
   @spec valid_format?(binary) :: boolean
   @doc ~S"""
@@ -82,7 +85,7 @@ defmodule ExVatcheck.Countries do
     do: false
 
   def valid_format?(<<country::binary-size(2), _::binary>> = vat) do
-    @regexes
+    get_regexes()
     |> Map.get(country)
     |> Regex.match?(vat)
   end
